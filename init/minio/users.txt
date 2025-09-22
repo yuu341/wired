@@ -1,0 +1,14 @@
+# MinIO ユーザー設定
+# 形式: ユーザー名:パスワード:ポリシー
+
+# 管理者ユーザー
+admin:admin123:consoleAdmin
+
+# アプリケーション用ユーザー
+app-user:app-secret-key:readwrite
+
+# 読み取り専用ユーザー
+readonly-user:readonly-pass:readonly
+
+# 開発者用ユーザー
+dev-user:dev-password:readwrite

@@ -1,0 +1,20 @@
+# MinIO バケット設定
+# 形式: バケット名:ポリシー:バージョニング:暗号化
+
+# 開発用バケット
+dev-bucket:public:enabled:disabled
+
+# 本番用バケット
+prod-bucket:private:enabled:enabled
+
+# ユーザーアップロード用
+user-uploads:download:enabled:disabled
+
+# 静的ファイル用（CSS、JS、画像など）
+static-assets:public:disabled:disabled
+
+# ログファイル用
+app-logs:private:enabled:disabled
+
+# バックアップ用
+backups:private:enabled:enabled

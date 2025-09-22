@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.security.enabled=false
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+
+  # MinIO S3互換オブジェクトストレージ
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"   # API
+      - "9001:9001"   # Web UI
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
+  # MinIO初期設定（バケット作成等）
+  # 注意: 初回のみ実行される。データは永続化されるため、2回目以降は不要
+  minio-setup:
+    image: minio/mc:latest
+    depends_on:
+      - minio
+    restart: "no"  # 一度実行したら再起動しない
+    volumes:
+      - ./init/minio:/init_config:ro  # 設定ファイルをマウント
+    entrypoint: ["sh", "/init_config/init.sh"]
+
+volumes:
+  esdata:
+  minio_data:
